@@ -1,12 +1,13 @@
 /* Kääntäminen g++ -w lipulla tällä hetkellä */
 
-/* Harjoituksen 2 ohjelmarunko */
-/* Tee runkoon tarvittavat muutokset kommentoiden */
-/* Pistesuorituksista kooste tähän alkuun */
 /* 2p = täysin tehty suoritus, 1p = osittain tehty suoritus */
-/* Tarkemmat ohjeet Moodlessa */
-/* Lisäohjeita, vinkkejä ja apuja löytyy koodin joukosta */
-/* OPISKELIJA: merkityt kohdat eritoten kannattaa katsoa huolella */
+
+/* 1. toimiva rinnakkainen prosessitoteutus missä rotat (lapsiprosessit) liikkuvat itsenäisesti labyrintissa, 
+parent prosessi odottaa kaikkien rottien pääsemistä suuaukolle ja ohjelma poistuu
+-testattavat asiat: useiden prosessien käsittely ja yksinkertainen jaetun muistin käyttäminen prosessien välillä tiedonvälittämisessä */
+
+// 2p täysi toteutus!
+
 
 //peruskirjastot mitä tarvii aika lailla aina kehitystyössä
 //OPISKELIJA: lisää tarvitsemasi peruskirjastot
