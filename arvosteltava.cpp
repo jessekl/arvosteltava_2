@@ -31,7 +31,7 @@ using namespace std;
 #define KORKEUS 100
 #define LEVEYS 100
 using lab_t = int[KORKEUS][LEVEYS] ; // type alias for 2d array
-lab_t* gLabyrintti = nullptr;
+lab_t* gLabyrintti = nullptr; // Globaali pointteri labyrintille
 //karttasijainnin tallettamiseen käytettävä rakenne, luotaessa alustuu vasempaan alakulmaan
 //HUOM! ykoordinaatti on peilikuva taulukon rivi-indeksiin
 //PasiM: TODO, voisi yksinkertaistaa että ykoord olisi sama kuin rivi-indeksi
@@ -390,8 +390,8 @@ int aloitaRotta(Mode modeOfOp){
     return liikkuCount;
 }
 
-int segment_id;
-//OPISKELIJA: nykyinen main on näin yksinkertainen, tästä pitää muokata se rinnakkaisuuden pohja
+int segment_id; // TODO: Make clean struct for the shared memory
+// Ohjelma ottaa parametreinä "-p" tai "-t"
 int main(int argc, char *argv[]){
 
     int inputLabyrintti[KORKEUS][LEVEYS] = {
@@ -496,7 +496,7 @@ int main(int argc, char *argv[]){
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,4,1,1},
     };
-    // Valitsee prosesseilla vai thredeillä
+    // Valitsee toimiiko prosesseilla vai thredeillä
     if(argc != 2) {
         cout << "Anna parametriksi -p tai -t" << endl;
         return 1;
@@ -517,18 +517,19 @@ int main(int argc, char *argv[]){
     if(segment_id != -1){
         void* pv = shmat(segment_id, nullptr, 0);
         if(pv != nullptr){
-            gLabyrintti = static_cast<lab_t*>(pv) ; // cast to pointer to the 2d char array type
+            gLabyrintti = static_cast<lab_t*>(pv) ; // Cast to pointer to the 2d char array type (Lähde: https://cplusplus.com/forum/beginner/274563/)
             // Fills the labyrinth
             for(int y=0; y<KORKEUS; ++y){
                 for(int x=0; x<LEVEYS; ++x){
-                    (*gLabyrintti)[y][x] = inputLabyrintti[y][x]; 
+                    (*gLabyrintti)[y][x] = inputLabyrintti[y][x]; // Globaalin pointterin käyttö
                 }
             }
-            const int N = 5;
+            // N määrä rottia käy labyrintin läpi
+            const int N = 100;
             switch(modeOfOp){
                 case PROCESSES:
                     for (int i = 0; i < N; ++i) {
-                        pid_t pid = fork();
+                        pid_t pid = fork(); // Syntyy lapsi prosessi
                         if (pid == -1) { perror("fork"); return 1; }
                         if (pid == 0) {
                             void* childPv = shmat(segment_id, nullptr, 0);
@@ -539,10 +540,11 @@ int main(int argc, char *argv[]){
                             return(0);
                         }
                     }
-                    for (int i = 0; i < N; ++i) wait(nullptr);
+                    for (int i = 0; i < N; ++i) wait(nullptr); // Odottaa rottien paluuta
                     break;
 
                 case THREADS:
+                    // TODO: Implement multithreading with pthreads
                     //aloitaRotta(modeOfOp);
                     break;
                 default:
