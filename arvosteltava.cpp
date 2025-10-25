@@ -514,12 +514,13 @@ int main(int argc, char *argv[]){
         cout << "Anna parametriksi -p tai -t" << endl;
         return 1;
     }
+    // Arvosteltava osuus 1.
     const int segment_id = shmget(IPC_PRIVATE, sizeof(lab_t), S_IRUSR | S_IWUSR);
     if(segment_id != -1){
         void* pv = shmat(segment_id, nullptr, 0);
         if(pv != nullptr){
-            gLabyrintti = static_cast<lab_t*>(pv) ; // Cast to pointer to the 2d char array type (Lähde: https://cplusplus.com/forum/beginner/274563/)
-            // Fills the labyrinth
+            gLabyrintti = static_cast<lab_t*>(pv); // Tyyppimuunnos jaetun muistin pointterista labyrintin globaaliin pointteriin
+            // Jaetun muistin täyttö annetulla labyrintillä
             for(int y=0; y<KORKEUS; ++y){
                 for(int x=0; x<LEVEYS; ++x){
                     (*gLabyrintti)[y][x] = inputLabyrintti[y][x]; // Globaalin pointterin käyttö
